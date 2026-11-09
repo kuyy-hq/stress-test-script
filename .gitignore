@@ -1,0 +1,12 @@
+# Working credentials and environment settings
+.env
+accounts.csv
+tokens.json
+users.csv
+
+# Generated per environment
+fixtures.json
+.mock/
+.tmp-check/
+results/
+state/

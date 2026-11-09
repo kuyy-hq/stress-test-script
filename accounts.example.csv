@@ -1,0 +1,11 @@
+# The accounts the stress test acts as. Copy to accounts.csv and replace the rows with your own.
+# role: host (creates the events), passhost (a host whose pass holders D1 pages; also creates events), user (joins).
+# refresh_token: leave it empty and run "make login" to get one through the e-mail code, or paste one you already have.
+# No commas inside a value. Use at least one host and one user; the hot event gets one guest per user account.
+email,role,refresh_token
+host1@example.invalid,host,
+host2@example.invalid,host,
+passhost@example.invalid,passhost,
+user1@example.invalid,user,
+user2@example.invalid,user,
+user3@example.invalid,user,
