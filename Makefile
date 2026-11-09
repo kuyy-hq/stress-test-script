@@ -135,6 +135,7 @@ test: ## Unit tests of the token tool and a syntax check of every script
 	  for f in .tmp-check/*.mjs tools/*.mjs tools/lib/*.mjs; do node --check $$f || exit 1; done; rm -rf .tmp-check; echo "scripts parse"
 	bash -n tools/preflight.sh
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= bash tools/preflight.sh >/dev/null 2>&1
+	@env BASE_URL=http://localhost WEB_URL=https://kuyy.id ALLOWED_HOSTS=kuyy.id ALLOW_KUYY_HOSTS=true TEST_DB_URL= S=f1 bash tools/preflight.sh >/dev/null
 	@for scenario in event_detail a1 a4; do env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=$$scenario PROFILE=smoke TARGET_RPS=1 SPREAD_IP=false bash tools/preflight.sh >/dev/null || exit 1; done
 	@for scenario in event_detail a1 a4 prod_read f1; do for rps in 10 100 500; do for scale in 0.05 0.5; do env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= TARGET_WEB_RPS= ALLOW_PRODUCTION_READ_ONLY=true S=$$scenario PROFILE=load TARGET_RPS=$$rps SCALE=$$scale SPREAD_IP=false bash tools/preflight.sh >/dev/null || exit 1; done; done; done
 	@for rps in 10 100 500; do for scale in 0.05 0.5; do env BASE_URL=http://localhost WEB_URL=https://kuyy.app ALLOWED_HOSTS= TEST_DB_URL= TARGET_WEB_RPS= ALLOW_PRODUCTION_READ_ONLY=true S=f1 PROFILE=load TARGET_RPS=$$rps SCALE=$$scale SPREAD_IP=false bash tools/preflight.sh >/dev/null || exit 1; done; done
@@ -142,7 +143,7 @@ test: ## Unit tests of the token tool and a syntax check of every script
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=a2 PROFILE=smoke TARGET_RPS=1 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=prod_read PROFILE=smoke TARGET_RPS=1 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
 	@! env BASE_URL=http://localhost WEB_URL=https://kuyy.app ALLOWED_HOSTS= TEST_DB_URL= TARGET_WEB_RPS=1000 ALLOW_PRODUCTION_READ_ONLY=true S=f1 PROFILE=load TARGET_RPS=10 SCALE=0.05 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
-	@! env BASE_URL=http://localhost WEB_URL=https://kuyy.app ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=a1 PROFILE=load TARGET_RPS=10 SCALE=0.05 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
+	@env BASE_URL=http://localhost WEB_URL=https://kuyy.app ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=a1 PROFILE=load TARGET_RPS=10 SCALE=0.05 SPREAD_IP=false bash tools/preflight.sh >/dev/null
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=a1 PROFILE=load TARGET_RPS=10000 SCALE=0.05 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=event_detail PROFILE=load TARGET_RPS=50 SCALE=0.05 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1
 	@! env BASE_URL=https://kuyy.app WEB_URL=http://localhost ALLOWED_HOSTS= TEST_DB_URL= ALLOW_PRODUCTION_READ_ONLY=true S=event_detail PROFILE=load TARGET_RPS=10 SCALE=1 SPREAD_IP=false bash tools/preflight.sh >/dev/null 2>&1

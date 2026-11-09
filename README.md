@@ -6,8 +6,11 @@ hypotheses (H1 to H10) are the ones in that plan.
 
 > **Never run normal load profiles against dev, beta, or prod.** Beta uses the production database, Redis, and Pub/Sub. Dev uses the
 > production Postgres host and Redis server, runs cron, and sends real email and WhatsApp. A load test there is a
-> load test on production. `make run` and the API tools first run `tools/preflight.sh`, which refuses any host that is not
-> `localhost` or in `ALLOWED_HOSTS`, and always refuses `kuyy.id` and `kuyy.app`.
+> load test on production. `make run` and the API tools first run `tools/preflight.sh`, which refuses any active target host
+> that is not `localhost` or in `ALLOWED_HOSTS`, and refuses `kuyy.id` and `kuyy.app` outside the guarded read-only tiers below.
+
+To explicitly allow an exact KUYY host for a controlled test, put it in `ALLOWED_HOSTS` and set
+`ALLOW_KUYY_HOSTS=true`. Both settings are required; other KUYY hosts remain refused.
 
 The production read-only scenarios are public event detail, public list (`a1`), anonymous activity search (`a4`), their parallel mix (`prod_read`), and web pages (`f1`). Smoke runs at 1 RPS for 30 seconds:
 

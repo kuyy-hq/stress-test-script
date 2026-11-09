@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Stops a run before it sends a request when a target is not the stress-test environment.
 #
-# Every host in BASE_URL, WEB_URL and TEST_DB_URL must be localhost or listed in ALLOWED_HOSTS
-# (comma separated). KUYY hosts are refused except for the explicit public-detail production tiers below.
+# Every active target host must be localhost or listed in ALLOWED_HOSTS (comma separated).
+# WEB_URL is active only for S=f1. KUYY hosts are refused except for the explicit
+# public-detail production tiers below.
 # Dev, beta and prod share the production database, Redis and message queue, so normal load tests stay refused.
 set -euo pipefail
 
@@ -42,7 +43,9 @@ check_host() {
   host="$(host_of "$url" | tr '[:upper:]' '[:lower:]')"
   host="${host%.}"
   if printf '%s' "$host" | grep -Eq "$hard_deny"; then
-    if production_read_only && production_label_allowed "$label"; then
+    if [ "${ALLOW_KUYY_HOSTS:-false}" = true ] && [[ "$allowed" == *" $host "* ]]; then
+      echo "WARNING  $label -> $host: explicitly allowed KUYY host"
+    elif production_read_only && production_label_allowed "$label"; then
       echo "WARNING  $label -> $host: production read-only $PROFILE, TARGET_RPS=$TARGET_RPS"
     else
       echo "REFUSED: $label points at $host, a KUYY host." >&2
@@ -56,8 +59,11 @@ check_host() {
   fi
 }
 
-check_host BASE_URL "${BASE_URL:-}"
-check_host WEB_URL "${WEB_URL:-}"
+if [ "${S:-}" = f1 ]; then
+  check_host WEB_URL "${WEB_URL:-}"
+else
+  check_host BASE_URL "${BASE_URL:-}"
+fi
 check_host TEST_DB_URL "${TEST_DB_URL:-}"
 
 if [ -n "${TEST_DB_URL:-}" ]; then
