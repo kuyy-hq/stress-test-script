@@ -41,6 +41,19 @@ Test production web pages with `S=f1`; leave `TARGET_WEB_RPS` unset so preflight
 ALLOW_PRODUCTION_READ_ONLY=true SPREAD_IP=false make run S=f1 PROFILE=load TARGET_RPS=10 SCALE=0.05 WEB_URL=https://kuyy.app
 ```
 
+F1 also has one-minute high-load tiers. Run them in order and stop after the first failed stage:
+
+```sh
+ALLOW_PRODUCTION_READ_ONLY=true SPREAD_IP=false make run S=f1 PROFILE=load TARGET_RPS=1000 SCALE=0.05 WEB_URL=https://kuyy.app
+ALLOW_PRODUCTION_READ_ONLY=true SPREAD_IP=false make run S=f1 PROFILE=load TARGET_RPS=2500 SCALE=0.05 WEB_URL=https://kuyy.app
+ALLOW_PRODUCTION_READ_ONLY=true SPREAD_IP=false make run S=f1 PROFILE=load TARGET_RPS=5000 SCALE=0.05 WEB_URL=https://kuyy.app
+ALLOW_PRODUCTION_READ_ONLY=true SPREAD_IP=false make run S=f1 PROFILE=load TARGET_RPS=10000 SCALE=0.05 WEB_URL=https://kuyy.app
+```
+
+Set `PRE_ALLOCATED_VUS=<n>` and `MAX_VUS=<n>` only when the generator has enough CPU and memory. They change generator
+capacity, not the target RPS. For example, a separate load generator can start the 10,000 RPS tier with
+`PRE_ALLOCATED_VUS=6000 MAX_VUS=12000`.
+
 For a 10-minute run (2.5 minutes ramp, 7.5 minutes hold), use `S=event_detail`, `S=a1`, `S=a4`, or `S=f1`:
 
 ```sh

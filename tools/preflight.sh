@@ -23,6 +23,10 @@ production_read_only() {
   [ "${SPREAD_IP:-true}" = false ] || return 1
   case "${PROFILE:-}:${TARGET_RPS:-}:${SCALE:-1}" in
     smoke:1:*|load:10:0.05|load:100:0.05|load:500:0.05|load:10:0.5|load:100:0.5|load:500:0.5) return 0 ;;
+  esac
+  [ "${S:-}" = f1 ] || return 1
+  case "${PROFILE:-}:${TARGET_RPS:-}:${SCALE:-1}" in
+    load:1000:0.05|load:2500:0.05|load:5000:0.05|load:10000:0.05) return 0 ;;
     *) return 1 ;;
   esac
 }

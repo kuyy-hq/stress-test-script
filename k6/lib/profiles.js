@@ -49,7 +49,7 @@ export function arrivalScenario({ exec, weight = 1, profile = PROFILE, target = 
     // VUs needed = rate x latency. Start small, let k6 add more, and cap the total so that a saturated target
     // cannot exhaust the memory of the machine running k6. An iteration that finds no free VU is counted in
     // dropped_iterations: the target (or the generator) could not keep up with the planned rate.
-    preAllocatedVUs: Math.min(Math.ceil(rate * 0.1) + 20, 500),
+    preAllocatedVUs: Number(__ENV.PRE_ALLOCATED_VUS || Math.min(Math.ceil(rate * 0.1) + 20, 500)),
     maxVUs: Number(__ENV.MAX_VUS || Math.min(Math.ceil(rate * 2) + 100, 6000)),
     stages: arrivalStages(profile, rate),
   };
