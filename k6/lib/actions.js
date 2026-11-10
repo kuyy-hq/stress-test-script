@@ -2,7 +2,7 @@
 import { check } from 'k6';
 import { Counter } from 'k6/metrics';
 import { get, post } from './http.js';
-import { fixtures, need, pick } from './fixtures.js';
+import { need, pick } from './fixtures.js';
 import { randomToken, tokenAt } from './auth.js';
 import { WEB } from './config.js';
 
@@ -123,13 +123,6 @@ export function passHolderCount(hostToken) {
 // ---- Web (kuyy-web) ----------------------------------------------------------------------------
 
 export function webPage() {
-  const roll = Math.random();
-  let path;
-  if (roll < 0.25) path = '/';
-  else if (roll < 0.55) path = `/activities/${need('hot_event_id')}`;
-  else if (roll < 0.85) path = `/activities/${pick(fixtures.fill_event_ids?.length ? fixtures.fill_event_ids : [need('hot_event_id')])}`;
-  else path = '/search';
-  get(path, { kind: 'web', name: `web ${path.startsWith('/activities/') ? '/activities/{id}' : path}`, base: WEB });
+  const path = `/activities/${need('hot_event_id')}`;
+  get(path, { kind: 'web', name: 'web /activities/{id}', base: WEB });
 }
-
-export { fixtures };

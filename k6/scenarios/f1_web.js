@@ -1,4 +1,5 @@
-// F1 (burst) and F2 (soak). Pages of kuyy-web, anonymous. Hypothesis H4: server rendering per request and pod memory.
+// F1 (burst) and F2 (soak). Repeatedly renders the hot activity page on kuyy-web, anonymously.
+// Hypothesis H4: server rendering per request and pod memory.
 // PROFILE=spike for F1, PROFILE=soak for F2. During the soak, take two heap snapshots (see README).
 import { arrivalScenario } from '../lib/profiles.js';
 import { thresholds } from '../lib/thresholds.js';
